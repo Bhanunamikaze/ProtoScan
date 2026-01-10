@@ -1,0 +1,6 @@
+{
+  "admin": true,
+  "__proto__": {
+    "isAdmin": true
+  }
+}

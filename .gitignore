@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.python-version
+.venv/
+.mypy_cache/
+.pytest_cache/
+plan.local.md
+TASKS.local.md
+improvements.local.md
+*.egg-info/
+test.html
+vuln_apps/

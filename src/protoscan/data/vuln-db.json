@@ -1,0 +1,44 @@
+[
+  {
+    "name": "lodash",
+    "spec": "<4.17.21",
+    "severity": "high",
+    "cves": ["CVE-2019-10744", "CVE-2020-8203"],
+    "reference": "https://nvd.nist.gov/vuln/detail/CVE-2019-10744"
+  },
+  {
+    "name": "qs",
+    "spec": "<6.0.4",
+    "severity": "high",
+    "cves": ["CVE-2017-1000048"],
+    "reference": "https://nvd.nist.gov/vuln/detail/CVE-2017-1000048"
+  },
+  {
+    "name": "minimist",
+    "spec": "<1.2.6",
+    "severity": "medium",
+    "cves": ["CVE-2021-44906"],
+    "reference": "https://nvd.nist.gov/vuln/detail/CVE-2021-44906"
+  },
+  {
+    "name": "bson",
+    "spec": "<1.1.4",
+    "severity": "medium",
+    "cves": ["CVE-2020-7610"],
+    "reference": "https://nvd.nist.gov/vuln/detail/CVE-2020-7610"
+  },
+  {
+    "name": "deep-extend",
+    "spec": "<0.5.1",
+    "severity": "high",
+    "cves": ["CVE-2018-3750"],
+    "reference": "https://nvd.nist.gov/vuln/detail/CVE-2018-3750"
+  },
+  {
+    "name": "merge",
+    "spec": "<99.0.0",
+    "severity": "high",
+    "cves": ["ADV-merge-prototype-pollution"],
+    "reference": "https://www.npmjs.com/package/merge"
+  }
+]

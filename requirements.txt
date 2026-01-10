@@ -1,0 +1,4 @@
+packaging>=23.0
+tree_sitter>=0.25.0
+tree_sitter_javascript>=0.25.0
+tree_sitter_typescript>=0.23.0

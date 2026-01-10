@@ -1,0 +1,14 @@
+Project: PROJECT_ROOT
+Runtimes: unknown
+Dependency Findings: 0
+Exploit Chains: 2
+- [HIGH] POST /api/user: POST /api/user accepts attacker-controlled input → Object.assign merge at PROJECT_ROOT/sample_app.js:8 executes and merge attacker JSON into existing objects → Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands
+    desc: Attacker input from POST /api/user reaches Object.assign merge at PROJECT_ROOT/sample_app.js:8, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.
+    validate: Requires authenticated request (x-auth header). No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.
+    payload: __proto__.protoscan
+    payload variants: JSON body
+- [CRITICAL] POST /api/settings: POST /api/settings accepts attacker-controlled input → Object.assign merge at PROJECT_ROOT/sample_app.js:14 executes and merge attacker JSON into existing objects → Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands
+    desc: Attacker input from POST /api/settings reaches Object.assign merge at PROJECT_ROOT/sample_app.js:14, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.
+    validate: Reachable anonymously. No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.
+    payload: __proto__.protoscan
+    payload variants: JSON body

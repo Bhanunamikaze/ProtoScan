@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "protoscan"
+version = "0.1.0"
+description = "Prototype pollution scanner"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Prototype Pollution Team" }]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+dependencies = [
+    "packaging>=23.0",
+    "tree_sitter>=0.25.0",
+    "tree_sitter_javascript>=0.25.0",
+    "tree_sitter_typescript>=0.23.0",
+]
+
+[project.scripts]
+protoscan = "protoscan.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"protoscan" = ["data/*.json"]
+
+[tool.protoscan]
+default_config = "/home/stark/Projects/PrototypePollution/.protoscanrc.json"

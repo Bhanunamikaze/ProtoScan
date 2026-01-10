@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "ProtoScan",
+          "informationUri": "https://github.com/Bhanunamikaze/ProtoScan"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "gadget.rce.child_process.exec",
+          "level": "error",
+          "message": {
+            "text": "POST /api/user accepts attacker-controlled input \u2192 Object.assign merge at PROJECT_ROOT/sample_app.js:8 executes and merge attacker JSON into existing objects \u2192 Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PROJECT_ROOT/sample_app.js"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "high",
+            "route": {
+              "method": "POST",
+              "path": "/api/user"
+            },
+            "metadata": {
+              "requiresAuth": true,
+              "hasSchemaValidation": false,
+              "clientGadget": false,
+              "gadgetImpact": "execute arbitrary OS commands"
+            },
+            "description": "Attacker input from POST /api/user reaches Object.assign merge at PROJECT_ROOT/sample_app.js:8, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.",
+            "validation": "Requires authenticated request (x-auth header). No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.",
+            "exploitExample": "__proto__.protoscan",
+            "payloadVariants": [
+              {
+                "channel": "http-json",
+                "label": "JSON body",
+                "payload": "__proto__.protoscan",
+                "category": "server",
+                "notes": "Send JSON body with polluted `__proto__` keys to merge operations (Object.assign/lodash).",
+                "steps": [
+                  "POST POST /api/user with a JSON body that includes prototype keys.",
+                  "If validation removes unknown keys, switch to constructor.prototype keys."
+                ],
+                "alternates": [
+                  "__proto__[protoscan]",
+                  "constructor.prototype.protoscan",
+                  "constructor[prototype][protoscan]"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "ruleId": "gadget.rce.child_process.exec",
+          "level": "error",
+          "message": {
+            "text": "POST /api/settings accepts attacker-controlled input \u2192 Object.assign merge at PROJECT_ROOT/sample_app.js:14 executes and merge attacker JSON into existing objects \u2192 Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PROJECT_ROOT/sample_app.js"
+                },
+                "region": {
+                  "startLine": 13
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "critical",
+            "route": {
+              "method": "POST",
+              "path": "/api/settings"
+            },
+            "metadata": {
+              "requiresAuth": false,
+              "hasSchemaValidation": false,
+              "clientGadget": false,
+              "gadgetImpact": "execute arbitrary OS commands"
+            },
+            "description": "Attacker input from POST /api/settings reaches Object.assign merge at PROJECT_ROOT/sample_app.js:14, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.",
+            "validation": "Reachable anonymously. No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.",
+            "exploitExample": "__proto__.protoscan",
+            "payloadVariants": [
+              {
+                "channel": "http-json",
+                "label": "JSON body",
+                "payload": "__proto__.protoscan",
+                "category": "server",
+                "notes": "Send JSON body with polluted `__proto__` keys to merge operations (Object.assign/lodash).",
+                "steps": [
+                  "POST POST /api/settings with a JSON body that includes prototype keys.",
+                  "If validation removes unknown keys, switch to constructor.prototype keys."
+                ],
+                "alternates": [
+                  "__proto__[protoscan]",
+                  "constructor.prototype.protoscan",
+                  "constructor[prototype][protoscan]"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "properties": {
+            "runtimeDetection": {
+              "runtimes": [],
+              "frameworks": [],
+              "build_tools": [],
+              "projects": []
+            },
+            "dependencySummary": {
+              "totalFindings": 0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

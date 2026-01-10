@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Prototype Pollution Report</title>
+<style>
+:root { color-scheme: light; }
+body {
+font-family: "Segoe UI", Roboto, Arial, sans-serif;
+margin: 2rem;
+background: #f4f6fa;
+color: #111;
+}
+h1, h2 { color: #1a237e; }
+table {
+border-collapse: collapse;
+width: 100%;
+margin-bottom: 2rem;
+background: #fff;
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+table-layout: fixed;
+}
+th, td {
+border-bottom: 1px solid #e0e0e0;
+padding: 0.65rem;
+text-align: left;
+vertical-align: top;
+white-space: normal;
+word-break: break-word;
+}
+th {
+background: #eef1f7;
+text-transform: uppercase;
+font-size: 0.75rem;
+letter-spacing: 0.05em;
+}
+.chains-table thead .filter-row th {
+background: #fff;
+}
+.chains-table td {
+font-size: 0.9rem;
+line-height: 1.4;
+}
+code {
+background: #f0f0f0;
+padding: 2px 4px;
+border-radius: 4px;
+font-size: 0.8rem;
+}
+.summary {
+display: flex;
+gap: 1rem;
+flex-wrap: wrap;
+margin-bottom: 1.5rem;
+}
+.runtime-details {
+margin-bottom: 1.5rem;
+}
+.runtime-list {
+list-style: none;
+padding-left: 0;
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+}
+.runtime-list li {
+background: #fff;
+border-radius: 8px;
+padding: 0.6rem 0.8rem;
+box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+font-size: 0.9rem;
+}
+.card {
+background: #fff;
+padding: 1rem 1.5rem;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+min-width: 140px;
+flex: 1;
+}
+.card h3 {
+margin: 0;
+font-size: 0.9rem;
+color: #607d8b;
+text-transform: uppercase;
+}
+.card .value {
+font-size: 1.8rem;
+margin: 0.25rem 0 0;
+font-weight: 600;
+}
+.badge {
+display: inline-block;
+padding: 0.2rem 0.5rem;
+border-radius: 999px;
+font-size: 0.75rem;
+letter-spacing: 0.05em;
+color: #fff;
+}
+.badge-client {
+background: #3f51b5;
+margin-right: 0.35rem;
+}
+.badge-critical { background: #f44336; }
+.badge-high { background: #ff9800; }
+.badge-medium { background: #ffb300; color:#111; }
+.badge-low { background: #8bc34a; color:#111; }
+.gadget-note {
+font-size: 0.78rem;
+color: #37474f;
+margin-top: 0.2rem;
+}
+.chains-table th {
+background: #f5f5f5;
+vertical-align: top;
+}
+.header-label {
+font-size: 0.78rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: #4e4e4e;
+}
+.header-filter {
+width: 100%;
+margin-top: 0.4rem;
+border-radius: 6px;
+padding: 0.35rem 0.5rem;
+border: 1px solid #c5c5c5;
+background: #fff;
+font-size: 0.85rem;
+}
+.header-filter:focus {
+outline: none;
+border-color: #1976d2;
+box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+}
+.heatmap {
+display: flex;
+gap: 1rem;
+margin-bottom: 1rem;
+}
+.heatmap-cell {
+flex: 1;
+padding: 0.75rem;
+border-radius: 8px;
+color: #fff;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: inset 0 0 12px rgba(0,0,0,0.08);
+}
+.heat-critical { background: #c62828; }
+.heat-high { background: #ef6c00; }
+.heat-medium { background: #fdd835; color:#111; }
+.heat-low { background: #558b2f; }
+.table-container {
+overflow-x: auto;
+border-radius: 10px;
+background: #fff;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.table-container table {
+min-width: 960px;
+margin: 0;
+box-shadow: none;
+}
+.column-controls {
+margin: 1rem 0;
+display: flex;
+flex-wrap: wrap;
+gap: 0.75rem;
+align-items: center;
+font-size: 0.9rem;
+}
+.column-controls label {
+font-weight: normal;
+}
+.steps-list {
+margin: 0;
+padding-left: 1.2rem;
+}
+.steps-list li {
+margin-bottom: 0.35rem;
+}
+.payload-block {
+background: #f4f4f4;
+padding: 0.5rem 0.75rem;
+border-radius: 6px;
+overflow-x: auto;
+font-family: "SFMono-Regular", Consolas, monospace;
+font-size: 0.8rem;
+white-space: pre-wrap;
+}
+.code-location {
+display: flex;
+flex-direction: column;
+gap: 0.25rem;
+}
+.code-path {
+font-weight: 600;
+font-size: 0.85rem;
+}
+.code-meta {
+font-size: 0.8rem;
+color: #37474f;
+}
+.code-snippet {
+background: #f9f9f9;
+border: 1px dashed #d0d0d0;
+padding: 0.35rem 0.5rem;
+border-radius: 6px;
+}
+.payload-tabs {
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+}
+.payload-filter {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+font-size: 0.85rem;
+}
+.payload-tab-list {
+display: flex;
+flex-wrap: wrap;
+gap: 0.4rem;
+}
+.payload-tab {
+border: 1px solid #d0d0d0;
+background: #fff;
+border-radius: 999px;
+padding: 0.25rem 0.9rem;
+cursor: pointer;
+font-size: 0.8rem;
+transition: background 0.2s ease;
+}
+.payload-tab.active {
+background: #1a73e8;
+color: #fff;
+border-color: #1a73e8;
+}
+.payload-panel {
+display: none;
+border: 1px solid #e3e3e3;
+border-radius: 8px;
+padding: 0.5rem 0.75rem;
+background: #fafafa;
+}
+.payload-panel.active {
+display: block;
+}
+.payload-panel-header {
+font-size: 0.85rem;
+font-weight: 600;
+margin-bottom: 0.4rem;
+display: flex;
+align-items: center;
+gap: 0.35rem;
+}
+.payload-note {
+font-size: 0.8rem;
+color: #37474f;
+margin: 0.4rem 0;
+}
+.payload-alt {
+font-size: 0.78rem;
+color: #555;
+margin-top: 0.3rem;
+}
+.badge-tag {
+background: #546e7a;
+}
+</style>
+</head>
+<body>
+<h1>Prototype Pollution Scan</h1>
+<p><strong>Project:</strong> PROJECT_ROOT</p>
+<p><strong>Runtimes:</strong> </p>
+
+<p>Download other formats: <a href="report.json">JSON</a> · <a href="report.sarif">SARIF</a> · <a href="report.csv">CSV</a></p>
+
+<section class="summary">
+<div class="card">
+<h3>Total Chains</h3>
+<p class="value">2</p>
+</div>
+<div class="card"><h3>Critical</h3><p class="value">1</p></div><div class="card"><h3>High</h3><p class="value">1</p></div>
+</section>
+
+<section class="runtime-details">
+<h2>Runtime Detection</h2>
+<ul class="runtime-list">
+<li>No runtime signatures detected.</li>
+</ul>
+</section>
+
+<div class="heatmap">
+<div class="heatmap-cell heat-critical"><span>Critical</span><strong>1</strong></div><div class="heatmap-cell heat-high"><span>High</span><strong>1</strong></div>
+</div>
+
+<div class="column-controls">
+<strong>Columns:</strong>
+<label><input type="checkbox" data-col="severity" checked onchange="toggleColumn(this)"> Severity</label><label><input type="checkbox" data-col="gadgetDomain" checked onchange="toggleColumn(this)"> Gadget Domain</label><label><input type="checkbox" data-col="title" checked onchange="toggleColumn(this)"> Vuln Title</label><label><input type="checkbox" data-col="route" checked onchange="toggleColumn(this)"> Route</label><label><input type="checkbox" data-col="source" checked onchange="toggleColumn(this)"> Source</label><label><input type="checkbox" data-col="sink" checked onchange="toggleColumn(this)"> Sink</label><label><input type="checkbox" data-col="gadget" checked onchange="toggleColumn(this)"> Gadget</label><label><input type="checkbox" data-col="steps" checked onchange="toggleColumn(this)"> Steps</label><label><input type="checkbox" data-col="description" checked onchange="toggleColumn(this)"> Description</label><label><input type="checkbox" data-col="validation" checked onchange="toggleColumn(this)"> Validation</label><label><input type="checkbox" data-col="payload" checked onchange="toggleColumn(this)"> Payload</label>
+</div>
+
+<h2>Exploit Chains (2)</h2>
+<div class="table-container">
+<table class="chains-table">
+<thead>
+<tr><th data-col="severity"><div class="header-label">Severity</div><select class="header-filter" id="filter-severity" data-filter-col="severity" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></th><th data-col="gadgetDomain"><div class="header-label">Gadget Domain</div><select class="header-filter" id="filter-gadgetDomain" data-filter-col="gadgetDomain" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="client">Client</option><option value="server">Server</option></select></th><th data-col="title"><div class="header-label">Vuln Title</div><select class="header-filter" id="filter-title" data-filter-col="title" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="Prototype Pollution via Object.assign">Prototype Pollution via Object.assign</option></select></th><th data-col="route"><div class="header-label">Route</div><select class="header-filter" id="filter-route" data-filter-col="route" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="POST /api/settings">POST /api/settings</option><option value="POST /api/user">POST /api/user</option></select></th><th data-col="source"><div class="header-label">Source</div><select class="header-filter" id="filter-source" data-filter-col="source" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="sample_app.js:13">sample_app.js:13</option><option value="sample_app.js:7">sample_app.js:7</option></select></th><th data-col="sink"><div class="header-label">Sink</div><select class="header-filter" id="filter-sink" data-filter-col="sink" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="sample_app.js:14">sample_app.js:14</option><option value="sample_app.js:8">sample_app.js:8</option></select></th><th data-col="gadget"><div class="header-label">Gadget</div><select class="header-filter" id="filter-gadget" data-filter-col="gadget" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="gadget.rce.child_process.exec">gadget.rce.child_process.exec</option></select></th><th data-col="steps"><div class="header-label">Steps</div><select class="header-filter" id="filter-steps" data-filter-col="steps" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="has">Has data</option><option value="empty">No data</option></select></th><th data-col="description"><div class="header-label">Description</div><select class="header-filter" id="filter-description" data-filter-col="description" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="has">Has data</option><option value="empty">No data</option></select></th><th data-col="validation"><div class="header-label">Validation</div><select class="header-filter" id="filter-validation" data-filter-col="validation" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="has">Has data</option><option value="empty">No data</option></select></th><th data-col="payload"><div class="header-label">Payload</div><select class="header-filter" id="filter-payload" data-filter-col="payload" onchange="applyRowFilters()"><option value="__all__" selected>All</option><option value="has">Has data</option><option value="empty">No data</option></select></th></tr>
+</thead>
+<tbody>
+<tr data-severity="critical" data-client="false" style="background:#f4433620"><td data-col="severity" data-filter-value="critical"><span class="badge badge-critical">CRITICAL</span></td><td data-col="gadgetDomain" data-filter-value="server">Server</td><td data-col="title" data-filter-value="Prototype Pollution via Object.assign">Prototype Pollution via Object.assign</td><td data-col="route" data-filter-value="POST /api/settings">POST /api/settings</td><td data-col="source" data-filter-value="sample_app.js:13"><div class="code-location"><div class="code-path">sample_app.js</div><div class="code-meta">http.request.body @ line 13, col 15</div><pre class="code-snippet">req.body</pre></div></td><td data-col="sink" data-filter-value="sample_app.js:14"><div class="code-location"><div class="code-path">sample_app.js</div><div class="code-meta">sink.object.assign @ line 14, col 3</div><pre class="code-snippet">Object.assign(settings, cfg)</pre></div></td><td data-col="gadget" data-filter-value="gadget.rce.child_process.exec">gadget.rce.child_process.exec<div class="gadget-note"><strong>Impact:</strong> execute arbitrary OS commands</div></td><td data-col="steps" data-filter-value="has"><ol class="steps-list"><li>POST /api/settings accepts attacker-controlled input</li><li>Object.assign merge at PROJECT_ROOT/sample_app.js:14 executes and merge attacker JSON into existing objects</li><li>Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands</li></ol></td><td data-col="description" data-filter-value="has">Attacker input from POST /api/settings reaches Object.assign merge at PROJECT_ROOT/sample_app.js:14, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.</td><td data-col="validation" data-filter-value="has">Reachable anonymously. No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.</td><td data-col="payload" data-filter-value="has"><div class="payload-tabs"><div class="payload-tab-list"><button type="button" class="payload-tab" data-payload-tab="payload-0-0" data-category="server">JSON body</button></div><div class="payload-panel" data-payload-panel="payload-0-0" data-category="server"><div class="payload-panel-header"><span class="badge badge-tag">Server</span> JSON body</div><pre class="payload-block">__proto__.protoscan</pre><div class="payload-note">Send JSON body with polluted `__proto__` keys to merge operations (Object.assign/lodash).</div><ol class="steps-list"><li>POST POST /api/settings with a JSON body that includes prototype keys.</li><li>If validation removes unknown keys, switch to constructor.prototype keys.</li></ol><div class="payload-alt"><strong>Alternates:</strong> __proto__[protoscan], constructor.prototype.protoscan, constructor[prototype][protoscan]</div></div></div></td></tr><tr data-severity="high" data-client="false" style="background:#ff980020"><td data-col="severity" data-filter-value="high"><span class="badge badge-high">HIGH</span></td><td data-col="gadgetDomain" data-filter-value="server">Server</td><td data-col="title" data-filter-value="Prototype Pollution via Object.assign">Prototype Pollution via Object.assign</td><td data-col="route" data-filter-value="POST /api/user">POST /api/user</td><td data-col="source" data-filter-value="sample_app.js:7"><div class="code-location"><div class="code-path">sample_app.js</div><div class="code-meta">http.request.body @ line 7, col 32</div><pre class="code-snippet">req.body</pre></div></td><td data-col="sink" data-filter-value="sample_app.js:8"><div class="code-location"><div class="code-path">sample_app.js</div><div class="code-meta">sink.object.assign @ line 8, col 3</div><pre class="code-snippet">Object.assign(target, data)</pre></div></td><td data-col="gadget" data-filter-value="gadget.rce.child_process.exec">gadget.rce.child_process.exec<div class="gadget-note"><strong>Impact:</strong> execute arbitrary OS commands</div></td><td data-col="steps" data-filter-value="has"><ol class="steps-list"><li>POST /api/user accepts attacker-controlled input</li><li>Object.assign merge at PROJECT_ROOT/sample_app.js:8 executes and merge attacker JSON into existing objects</li><li>Polluted data reaches gadget.rce.child_process.exec, enabling attackers to execute arbitrary OS commands</li></ol></td><td data-col="description" data-filter-value="has">Attacker input from POST /api/user reaches Object.assign merge at PROJECT_ROOT/sample_app.js:8, allowing an adversary to merge attacker JSON into existing objects. The polluted state then enables them to execute arbitrary OS commands.</td><td data-col="validation" data-filter-value="has">Requires authenticated request (x-auth header). No schema stripping detected; prototype keys will be accepted. Send payload below as JSON body. Replay the payload below to observe prototype pollution.</td><td data-col="payload" data-filter-value="has"><div class="payload-tabs"><div class="payload-tab-list"><button type="button" class="payload-tab" data-payload-tab="payload-1-0" data-category="server">JSON body</button></div><div class="payload-panel" data-payload-panel="payload-1-0" data-category="server"><div class="payload-panel-header"><span class="badge badge-tag">Server</span> JSON body</div><pre class="payload-block">__proto__.protoscan</pre><div class="payload-note">Send JSON body with polluted `__proto__` keys to merge operations (Object.assign/lodash).</div><ol class="steps-list"><li>POST POST /api/user with a JSON body that includes prototype keys.</li><li>If validation removes unknown keys, switch to constructor.prototype keys.</li></ol><div class="payload-alt"><strong>Alternates:</strong> __proto__[protoscan], constructor.prototype.protoscan, constructor[prototype][protoscan]</div></div></div></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Dependency Findings (0)</h2>
+<table>
+<thead>
+<tr><th>Package</th><th>Version</th><th>Spec</th><th>CVEs</th><th>Severity</th></tr>
+</thead>
+<tbody>
+<tr><td colspan="5">None</td></tr>
+</tbody>
+</table>
+<script>
+function collectColumnFilters() {
+const filters = {};
+document.querySelectorAll('.header-filter').forEach(select => {
+const column = select.getAttribute('data-filter-col');
+if (!column) {
+return;
+}
+filters[column] = select.value || '__all__';
+});
+return filters;
+}
+function applyRowFilters() {
+const filters = collectColumnFilters();
+document.querySelectorAll('tbody tr[data-severity]').forEach(row => {
+let visible = true;
+for (const [column, value] of Object.entries(filters)) {
+if (!value || value === '__all__') {
+continue;
+}
+const cell = row.querySelector('td[data-col="' + column + '"]');
+if (!cell) {
+continue;
+}
+const cellValue = cell.getAttribute('data-filter-value') || '';
+if (cellValue !== value) {
+visible = false;
+break;
+}
+}
+row.style.display = visible ? '' : 'none';
+});
+}
+function toggleColumn(cb) {
+const column = cb.getAttribute('data-col');
+document.querySelectorAll('[data-col="' + column + '"]').forEach(cell => {
+cell.style.display = cb.checked ? '' : 'none';
+});
+}
+function initPayloadTabs() {
+document.querySelectorAll('.payload-tabs').forEach(container => {
+const buttons = Array.from(container.querySelectorAll('[data-payload-tab]'));
+const panels = Array.from(container.querySelectorAll('[data-payload-panel]'));
+const filter = container.querySelector('[data-payload-filter]');
+if (!buttons.length) {
+return;
+}
+function activate(targetId) {
+buttons.forEach(button => {
+button.classList.toggle('active', button.getAttribute('data-payload-tab') === targetId);
+});
+panels.forEach(panel => {
+panel.classList.toggle('active', panel.getAttribute('data-payload-panel') === targetId);
+});
+}
+buttons.forEach(button => {
+button.addEventListener('click', () => activate(button.getAttribute('data-payload-tab')));
+});
+if (filter) {
+filter.addEventListener('change', () => {
+const value = filter.value;
+let firstVisible = null;
+buttons.forEach(button => {
+const matches = value === 'all' ? true : button.getAttribute('data-category') === value;
+button.style.display = matches ? '' : 'none';
+if (matches && !firstVisible) {
+firstVisible = button;
+}
+});
+if (firstVisible) {
+activate(firstVisible.getAttribute('data-payload-tab'));
+}
+});
+}
+activate(buttons[0].getAttribute('data-payload-tab'));
+});
+}
+applyRowFilters();
+initPayloadTabs();
+</script>
+</body>
+</html>

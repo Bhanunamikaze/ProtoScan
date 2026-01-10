@@ -1,0 +1,149 @@
+--- json report 1/2 ---
+{
+  "projectRoot": "/home/stark/Projects/PrototypePollution/tests/data",
+  "config": {
+    "project_root": "/home/stark/Projects/PrototypePollution/tests/data",
+    "severity": "medium",
+    "ignore": [],
+    "runtime_hints": [],
+    "cache_enabled": true
+  },
+  "runtimeDetection": {
+    "runtimes": [],
+    "frameworks": [],
+    "build_tools": []
+  },
+  "dependencyReport": {
+    "directDependencies": {},
+    "transitiveDependencies": {},
+    "findings": []
+  },
+  "sourceFindings": [
+    {
+      "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+      "line": 7,
+      "column": 32,
+      "kind": "http.request.body",
+      "snippet": "req.body"
+    }
+  ],
+  "sinkFindings": [
+    {
+      "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+      "line": 8,
+      "column": 3,
+      "kind": "sink.object.assign",
+      "snippet": "Object.assign(target, data)"
+    }
+  ],
+  "gadgetFindings": [
+    {
+      "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+      "line": 9,
+      "column": 3,
+      "kind": "gadget.rce.child_process.exec",
+      "snippet": "child_process.exec('ls')"
+    }
+  ],
+  "flowChains": [
+    {
+      "source": {
+        "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+        "line": 7,
+        "column": 32,
+        "kind": "http.request.body",
+        "snippet": "req.body"
+      },
+      "sink": {
+        "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+        "line": 8,
+        "column": 3,
+        "kind": "sink.object.assign",
+        "snippet": "Object.assign(target, data)"
+      },
+      "gadget": {
+        "path": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js",
+        "line": 9,
+        "column": 3,
+        "kind": "gadget.rce.child_process.exec",
+        "snippet": "child_process.exec('ls')"
+      },
+      "severity": "medium",
+      "metadata": {
+        "requiresAuth": true,
+        "hasSchemaValidation": true
+      },
+      "route": {
+        "method": "POST",
+        "path": "/api/user"
+      },
+      "exploitSteps": [
+        "POST /api/user receives user input",
+        "Input flows to sink.object.assign",
+        "Triggers gadget gadget.rce.child_process.exec"
+      ]
+    }
+  ]
+}
+--- sarif report 2/2 ---
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "ProtoScan",
+          "informationUri": "https://github.com/Bhanunamikaze/ProtoScan"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "gadget.rce.child_process.exec",
+          "level": "warning",
+          "message": {
+            "text": "POST /api/user receives user input \u2192 Input flows to sink.object.assign \u2192 Triggers gadget gadget.rce.child_process.exec"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "/home/stark/Projects/PrototypePollution/tests/data/sample_app.js"
+                },
+                "region": {
+                  "startLine": 7
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "medium",
+            "route": {
+              "method": "POST",
+              "path": "/api/user"
+            },
+            "metadata": {
+              "requiresAuth": true,
+              "hasSchemaValidation": true
+            }
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "properties": {
+            "runtimeDetection": {
+              "runtimes": [],
+              "frameworks": [],
+              "build_tools": []
+            },
+            "dependencySummary": {
+              "totalFindings": 0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

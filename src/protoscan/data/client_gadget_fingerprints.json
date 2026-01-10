@@ -1,0 +1,136 @@
+{
+  "gadgets": [
+    {
+      "kind": "gadget.client.analytics.adobe",
+      "callIdentifiers": ["_satellite"],
+      "callMembers": [{"object": "_satellite"}]
+    },
+    {
+      "kind": "gadget.client.analytics.akamai",
+      "callIdentifiers": ["BOOMR"],
+      "callMembers": [{"object": "BOOMR"}]
+    },
+    {
+      "kind": "gadget.client.framework.closure",
+      "callIdentifiers": ["goog"],
+      "callMembers": [{"object": "goog"}],
+      "memberReferences": [{"object": "goog", "property": "basePath"}]
+    },
+    {
+      "kind": "gadget.client.dom.dompurify",
+      "callIdentifiers": ["DOMPurify"],
+      "callMembers": [{"object": "DOMPurify", "property": "sanitize"}]
+    },
+    {
+      "kind": "gadget.client.media.embedly",
+      "callIdentifiers": ["embedly"],
+      "callMembers": [{"object": "window", "property": "embedly"}]
+    },
+    {
+      "kind": "gadget.client.dom.filterXSS",
+      "callIdentifiers": ["filterXSS"]
+    },
+    {
+      "kind": "gadget.client.ui.knockout",
+      "callMembers": [{"object": "ko"}]
+    },
+    {
+      "kind": "gadget.template.lodash",
+      "callMembers": [{"object": "_", "property": "template"}]
+    },
+    {
+      "kind": "gadget.client.ui.marionette",
+      "callMembers": [
+        {"object": "Marionette"},
+        {"object": "Marionette.View", "property": "extend"},
+        {"object": "Backbone.View", "property": "extend"}
+      ]
+    },
+    {
+      "kind": "gadget.client.security.recaptcha",
+      "callMembers": [{"object": "recaptcha"}]
+    },
+    {
+      "kind": "gadget.client.dom.sanitizeHtml",
+      "callIdentifiers": ["sanitizeHtml"]
+    },
+    {
+      "kind": "gadget.client.analytics.segment",
+      "callIdentifiers": ["analytics"],
+      "callMembers": [{"object": "analytics"}]
+    },
+    {
+      "kind": "gadget.client.dom.sprint",
+      "callIdentifiers": ["Sprint"]
+    },
+    {
+      "kind": "gadget.client.analytics.swiftype",
+      "identifierReferences": ["SwiftypeObject"],
+      "memberReferences": [{"object": "window", "property": "SwiftypeObject"}]
+    },
+    {
+      "kind": "gadget.client.analytics.tealium",
+      "callMembers": [{"object": "utag"}]
+    },
+    {
+      "kind": "gadget.client.analytics.twitter",
+      "callIdentifiers": ["twq"]
+    },
+    {
+      "kind": "gadget.client.media.wistia",
+      "callMembers": [
+        {"object": "wistiaEmbeds", "property": "push"},
+        {"object": "wistiaEmbeds", "property": "init"}
+      ]
+    },
+    {
+      "kind": "gadget.client.ui.zepto",
+      "callIdentifiers": ["Zepto"],
+      "memberReferences": [{"object": "$", "property": "zepto"}]
+    },
+    {
+      "kind": "gadget.client.ui.popper",
+      "callMembers": [{"object": "Popper", "property": "createPopper"}]
+    },
+    {
+      "kind": "gadget.client.analytics.pendo",
+      "callMembers": [{"object": "pendo"}]
+    },
+    {
+      "kind": "gadget.client.i18n.i18next",
+      "callMembers": [{"object": "i18next"}]
+    },
+    {
+      "kind": "gadget.client.analytics.demandbase",
+      "callMembers": [{"object": "Demandbase"}],
+      "identifierReferences": ["Demandbase"]
+    },
+    {
+      "kind": "gadget.client.analytics.analyticsjsPlugin",
+      "callIdentifiers": ["analyticsGtagManager"],
+      "callMembers": [{"object": "analyticsGtagManager"}],
+      "identifierReferences": ["_analytics"]
+    },
+    {
+      "kind": "gadget.client.analytics.mutiny",
+      "callIdentifiers": ["mutiny"],
+      "callMembers": [{"object": "mutiny"}]
+    },
+    {
+      "kind": "gadget.client.dom.amp",
+      "callIdentifiers": ["AMP"],
+      "callMembers": [{"object": "AMP"}]
+    },
+    {
+      "kind": "gadget.client.analytics.gtm",
+      "callMembers": [
+        {"object": "dataLayer", "property": "push"},
+        {"object": "google_tag_manager"}
+      ]
+    },
+    {
+      "kind": "gadget.client.analytics.google",
+      "callIdentifiers": ["gtag", "ga"]
+    }
+  ]
+}
